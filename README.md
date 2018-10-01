@@ -11,17 +11,31 @@ Report error and change nothing to the input .csv file if format does not match 
 * "SD of Salinity"
 * "Temperature"
 * "SD of Temperature"
+* "pKb"
+* "SD of pKb"
 * "d11Bsw"
 * "SD of d11Bsw"
 * "d11Bc"
 * "SD of d11Bc"
+* "pHcf"
+* "SD of pHcf"
+Columns "pKb", "SD of pKb","pHcf", and "SD of pHcf" are empty cells to be filled
 ## Output
 ### Directly output into the .csv file by appending columns
 #### Appending columns (fixed format)
+* "Sample Name"
+* "Salinity"
+* "SD of Salinity"
+* "Temperature"
+* "SD of Temperature"
 * "pKb"
 * "SD of pKb"
-* "pH"
-* "SD of pH"
+* "d11Bsw"
+* "SD of d11Bsw"
+* "d11Bc"
+* "SD of d11Bc"
+* "pHcf"
+* "SD of pHcf"
 ## Formula
 ### pKb
 pKb = -np.log10(np.exp((-8966.9-2890.53*(S**0.5)-77.942*S+1.728*(S**1.5)-0.0996*(S**2))/T+148.0248+137.1942*(S**0.5)+1.62142*S-(24.4344+25.085*(S**0.5)+0.2474*S)*np.log(T)+0.053105*(S**0.5)*T))
