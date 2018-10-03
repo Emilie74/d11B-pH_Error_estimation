@@ -3,8 +3,10 @@ import matplotlib.pyplot as plt
 import inspect
 from functools import wraps
 import csv
+import sys
 
 SAMPLE_CSV = "d11B-pH_Error_estimation.csv"
+SAMPLE_OUT_CSV = "d11B-pH_Error_estimation_out.csv"
 
 def showparam(f):
     @wraps(f)
@@ -107,19 +109,21 @@ def calc_pH_by_d11Bcarbonate_with_random_parameters(mu_d11Bcarbonate, sigma_d11B
 
 DEFAULT_SD_OF_D11BC = 0.82
       
-def test_csv(filename):
+def process_csv(filename, outname):
     print(filename)
     with open(filename) as csvfile:
         reader = csv.DictReader(csvfile)
         if reader.fieldnames != FIELDNAMES:
             print("error: illegal fieldnames: {n}".format(n=reader.fieldnames))
         data = [row for row in reader]
-    with open("temp.csv", 'wb') as csvfile:
+    with open(outname, 'wb') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=FIELDNAMES)
         writer.writeheader()
         for row in data:
 #             print row
-            if not all([row[k] for k in OUTPUT_FIELDS]):
+            if all([row[k] for k in OUTPUT_FIELDS]):
+                print("skipped Sample ID {s} which seems already done".format(s=row["Sample ID"]))
+            else:
                 try:
                     assert all([row[k] for k in MENDATORY_FIELDS])
                     if not row['SD of d11Bc']:
@@ -132,7 +136,13 @@ def test_csv(filename):
                     row['SD of pKb'] = pKb_valid.std()
                     row['pHcf'] = pH_valid.mean()
                     row['SD of pHcf'] = pH_valid.std()
-                    print("Sample ID {s}: {o}, ratio={r}%".format(s=row["Sample ID"], o=[row[k] for k in OUTPUT_FIELDS], r=100.0*valid_ratio))
+                    print("Sample ID {s:16}: {k:8.5f}, {t:8.5f}, {h:8.5f}, {d:8.5f} ratio={r:7.3f}%".format(
+                        s=row["Sample ID"], 
+                        k=row['pKb'], 
+                        t=row['SD of pKb'], 
+                        h=row['pHcf'], 
+                        d=row['SD of pHcf'],
+                        r=100.0*valid_ratio))
                 except Exception as e:
                     print(e)
                     print("warning: skipped Sample ID {s}".format(s=row["Sample ID"]))
@@ -146,4 +156,11 @@ if __name__ == "__main__":
 #     calc_pH_by_d11Bcarbonate(17.39, 0.19)
 
 #     calc_pH_by_d11Bcarbonate_with_random_parameters(12.35, 0.66/2, 32, 0.2, 25, 0.1, 39.61, 0.4/2)
-    test_csv(SAMPLE_CSV)
+
+    if len(sys.argv) == 1:
+        csvname = SAMPLE_CSV
+        outname = SAMPLE_OUT_CSV
+    else:
+        csvname = sys.argv[1]
+        outname = csvname
+    process_csv(csvname, outname)
