@@ -21,6 +21,7 @@ All column names (the first row) should be provided in input csv file
 * "pHcf"
 * "SD of pHcf"
 Columns "pKb", "SD of pKb","pHcf", and "SD of pHcf" are empty cells to be filled
+Auto fill "0.82" into empty cells in the column "SD of pHcf" before subsequent calculations.
 ## Output
 Won't change column names (the first row)
 Directly output into the .csv file by appending columns
