@@ -116,7 +116,7 @@ def process_csv(filename, outname):
         if reader.fieldnames != FIELDNAMES:
             print("error: illegal fieldnames: {n}".format(n=reader.fieldnames))
         data = [row for row in reader]
-    with open(outname, 'wb') as csvfile:
+    with open(outname, 'wb' if sys.version_info < (3, 0) else 'w') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=FIELDNAMES)
         writer.writeheader()
         for row in data:
